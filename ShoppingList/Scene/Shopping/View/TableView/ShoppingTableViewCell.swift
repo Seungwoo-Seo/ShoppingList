@@ -39,6 +39,7 @@ final class ShoppingTableViewCell: UITableViewCell {
         let label = UILabel()
         label.textColor = .black
         label.font = .systemFont(ofSize: 17, weight: .semibold)
+        label.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
         return label
     }()
     let likeButton = {
