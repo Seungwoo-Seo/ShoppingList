@@ -7,7 +7,9 @@
 
 import UIKit
 
+import RealmSwift
 import RxCocoa
+import RxDataSources
 import RxSwift
 import SnapKit
 
@@ -28,6 +30,7 @@ class ShoppingViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        print("realm 위치: ", Realm.Configuration.defaultConfiguration.fileURL!)
         initialAttributes()
         bind()
     }
@@ -42,31 +45,19 @@ class ShoppingViewController: UIViewController {
         let addButton = mainView.addButton
         let tableView = mainView.tableView
 
-        // config -> Output
-        viewModel.items
-            .bind(
-                to: tableView.rx.items(
-                    cellIdentifier: ShoppingTableViewCell.identifier,
-                    cellType: ShoppingTableViewCell.self
-                )
-            ) { row, element, cell in
-                cell.todoLabel.text = "\(element), \(row)"
+        let inputItem = PublishRelay<ShoppingTodo>()
+        let completeButtonIsSelected = PublishRelay<Bool>()
 
-                // Input Output 패턴을 사용할 때
-                // 이 셀 내부에 있는 컴포넌트들의 Input들을 어떻게 처리해줘야하지???? Input Output 패턴을 준수할 때???
-                cell.completeButton.rx.tap
-                cell.likeButton.rx.tap
-
-            }
-            .disposed(by: disposeBag)
+        let itemIsCompleted = PublishRelay<(todo: ShoppingTodo, isSelected: Bool)>()
 
         // Input
         let input = ShoppingViewModel.Input(
             searchButtonClicked: searchBar.rx.searchButtonClicked,
             addButtonTapped: addButton.rx.tap,
             searchBarText: searchBar.rx.text,
-            modelSelected: tableView.rx.modelSelected(String.self),
-            itemSelected: tableView.rx.itemSelected
+            modelSelected: tableView.rx.modelSelected(ShoppingTodo.self),
+            itemSelected: tableView.rx.itemSelected,
+            itemIsCompleted: itemIsCompleted
         )
 
         // Output
@@ -82,6 +73,53 @@ class ShoppingViewController: UIViewController {
                 print(value)
             }
             .disposed(by: disposeBag)
+
+        output.items
+            .bind(
+                to: tableView.rx.items(
+                    cellIdentifier: ShoppingTableViewCell.identifier,
+                    cellType: ShoppingTableViewCell.self
+                )
+            ) { row, element, cell in
+
+                cell.item
+                    .bind(with: self) { owner, todo in
+                        inputItem.accept(todo)
+                    }
+                    .disposed(by: cell.disposeBag)
+
+                cell.completeButtonIsSelected
+                    .bind(with: self) { owner, bool in
+                        completeButtonIsSelected.accept(bool)
+                    }
+                    .disposed(by: cell.disposeBag)
+
+                cell.completeButtonIsSelected
+                    .withLatestFrom(cell.item) { bool, todo in
+                        return (todo, bool)
+                    }
+                    .bind(with: self) { owner, value in
+                        itemIsCompleted.accept(value)
+                    }
+                    .disposed(by: cell.disposeBag)
+
+                cell.item.accept(element)
+            }
+            .disposed(by: disposeBag)
+
+//        let dataSource = RxTableViewSectionedReloadDataSource<ShoppingTodoSection>(
+//          configureCell: { dataSource, tableView, indexPath, item in
+//            let cell = tableView.dequeueReusableCell(
+//                withIdentifier: ShoppingTableViewCell.identifier,
+//                for: indexPath
+//            ) as? ShoppingTableViewCell
+//              cell?.item.accept(item)
+//            return cell ?? UITableViewCell()
+//        })
+//
+//        output.testItems
+//            .bind(to: tableView.rx.items(dataSource: dataSource))
+//            .disposed(by: disposeBag)
     }
 
 }

@@ -7,6 +7,8 @@
 
 import UIKit
 
+import RxCocoa
+import RxSwift
 import SnapKit
 
 final class ShoppingTableViewCell: UITableViewCell {
@@ -59,15 +61,58 @@ final class ShoppingTableViewCell: UITableViewCell {
         return button
     }()
 
+    var disposeBag = DisposeBag()
+
+    let completeButtonIsSelected = PublishRelay<Bool>()
+    let item = PublishRelay<ShoppingTodo>()
+    
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
 
         initialHierarchy()
         initialLayout()
+        bind()
     }
 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+
+    override func prepareForReuse() {
+        super.prepareForReuse()
+
+        disposeBag = DisposeBag()
+    }
+
+    func bind() {
+        item
+            .bind(with: self) { owner, todo in
+                owner.todoLabel.text = todo.name
+                owner.completeButton.isSelected = todo.isCompleted
+                owner.likeButton.isSelected = todo.isLiked
+            }
+            .disposed(by: disposeBag)
+
+        completeButton.rx.tap
+            .scan(false) { (lastState, newValue) in
+                !lastState
+            }
+            .bind(to: completeButton.rx.isSelected)
+            .disposed(by: disposeBag)
+
+        completeButton.rx.tap
+            .bind(with: self) { owner, _ in
+                let isSelected = owner.completeButton.isSelected
+                owner.completeButtonIsSelected.accept(isSelected)
+            }
+            .disposed(by: disposeBag)
+
+        likeButton.rx.tap
+            .scan(false) { lastState, newValue in
+                !lastState
+            }
+            .bind(to: likeButton.rx.isSelected)
+            .disposed(by: disposeBag)
     }
 
     func initialHierarchy() {

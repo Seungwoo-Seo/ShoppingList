@@ -13,43 +13,65 @@ import RxSwift
 final class ShoppingViewModel {
     let disposeBag = DisposeBag()
 
-    let items = BehaviorRelay(
-        value: [
-            "그립톡 구매하기",
-            "사이다 구매",
-            "아이패드 케이스 최저가 알아보기",
-            "양말"
-        ]
-    )
+    private var todoList: [ShoppingTodo] = []
+
+    private let task = Repository()
 
     struct Input {
         let searchButtonClicked: ControlEvent<Void>
         let addButtonTapped: ControlEvent<Void>
         let searchBarText: ControlProperty<String?>
 
-        let modelSelected: ControlEvent<String>
+        let modelSelected: ControlEvent<ShoppingTodo>
         let itemSelected: ControlEvent<IndexPath>
+
+        let itemIsCompleted: PublishRelay<(todo: ShoppingTodo, isSelected: Bool)>
     }
 
     struct Output {
         let query: Observable<String>
         let cellIdentifier: Observable<String>
+        let items: BehaviorRelay<[ShoppingTodo]>
     }
 
     func transform(input: Input) -> Output {
+        let items = BehaviorRelay(value: todoList)
+
+        // 전부 가져오기
+        let todoList = task.fetchShoppingTodoAll()
+        Observable.of(todoList)
+            .subscribe(with: self) { owner, todoList in
+                owner.todoList = todoList
+                items.accept(owner.todoList)
+            }
+            .disposed(by: disposeBag)
+
+        // 추가하기
+        input.addButtonTapped
+            .withLatestFrom(input.searchBarText.orEmpty) { _, text in
+                return text
+            }
+            .filter { !$0.isEmpty }
+            .map { text in
+                return ShoppingTodo(
+                    name: text,
+                    ownerId: UUID()
+                )
+            }
+            .subscribe(with: self) { owner, todo in
+                owner.task.addShoppingTodo(todo)
+                owner.todoList.append(todo)
+                items.accept(owner.todoList)
+            }
+            .disposed(by: disposeBag)
+
+
         let query = input.searchButtonClicked
             .throttle(.seconds(1), scheduler: MainScheduler.instance)
             .withLatestFrom(input.searchBarText.orEmpty) { _, text in
                 return text
             }
             // TODO: Realm 만들어서 검색 구현해야 함
-
-
-        input.addButtonTapped
-            .withLatestFrom(input.searchBarText.orEmpty) { _, text in
-                return text
-            }
-            // TODO: Realm에 업데이트 해줘야 함
 
 
         let cellIdentifier = Observable
@@ -60,9 +82,21 @@ final class ShoppingViewModel {
             .map { "\($0), \($1)" }
             // TODO: 보여질 VC에 전달할 데이터 만들어서 Output으로 만들기
 
+        input.itemIsCompleted
+            .bind(with: self) { owner, value in
+                if let index = owner.todoList.firstIndex(where: {$0.ownerId == value.todo.ownerId}) {
+                    owner.todoList[index].isCompleted = value.isSelected
+                    owner.task.updateShoppingTodoDTO(owner.todoList[index], isComplete: value.isSelected)
+                } else {
+                    print("❌ 발생할 일이 없음")
+                }
+            }
+            .disposed(by: disposeBag)
+
         return Output(
             query: query,
-            cellIdentifier: cellIdentifier
+            cellIdentifier: cellIdentifier,
+            items: items
         )
     }
 
