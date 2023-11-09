@@ -60,6 +60,7 @@ class ShoppingViewController: UIViewController {
             searchBarText: searchBar.rx.text,
             modelSelected: tableView.rx.modelSelected(ShoppingTodo.self),
             itemSelected: tableView.rx.itemSelected,
+            itemDeleted: tableView.rx.itemDeleted,
             itemIsCompleted: itemIsCompleted,
             itemIsLiked: itemIsLiked
         )
@@ -125,20 +126,6 @@ class ShoppingViewController: UIViewController {
                 cell.item.accept(element)
             }
             .disposed(by: disposeBag)
-
-//        let dataSource = RxTableViewSectionedReloadDataSource<ShoppingTodoSection>(
-//          configureCell: { dataSource, tableView, indexPath, item in
-//            let cell = tableView.dequeueReusableCell(
-//                withIdentifier: ShoppingTableViewCell.identifier,
-//                for: indexPath
-//            ) as? ShoppingTableViewCell
-//              cell?.item.accept(item)
-//            return cell ?? UITableViewCell()
-//        })
-//
-//        output.testItems
-//            .bind(to: tableView.rx.items(dataSource: dataSource))
-//            .disposed(by: disposeBag)
     }
 
 }

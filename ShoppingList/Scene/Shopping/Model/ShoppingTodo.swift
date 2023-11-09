@@ -115,9 +115,14 @@ class Repository {
     }
 
     func deleteShoppingTodo(_ todo: ShoppingTodo) {
+        guard let todoDTO = fetchShoppingTodoDTO(todo) else {
+            print("ShoppingTodoDTO is nil")
+            return
+        }
+
         do {
             try realm.write {
-                realm.delete(todo.toDTO)
+                realm.delete(todoDTO)
             }
         } catch {
             print("❌ deleteShoppingTodo")

@@ -22,8 +22,6 @@
 		57C97FEF2AFBDD2400435AE7 /* Realm in Frameworks */ = {isa = PBXBuildFile; productRef = 57C97FEE2AFBDD2400435AE7 /* Realm */; };
 		57C97FF12AFBDD2400435AE7 /* RealmSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 57C97FF02AFBDD2400435AE7 /* RealmSwift */; };
 		57C97FF32AFBDF8100435AE7 /* ShoppingTodo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57C97FF22AFBDF8100435AE7 /* ShoppingTodo.swift */; };
-		57C980002AFCE79B00435AE7 /* RxDataSources in Frameworks */ = {isa = PBXBuildFile; productRef = 57C97FFF2AFCE79B00435AE7 /* RxDataSources */; };
-		57C980022AFCE7D900435AE7 /* Test.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57C980012AFCE7D900435AE7 /* Test.swift */; };
 		57C980052AFCE8F200435AE7 /* DetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57C980042AFCE8F200435AE7 /* DetailViewController.swift */; };
 /* End PBXBuildFile section */
 
@@ -39,7 +37,6 @@
 		57C97FDF2AFAA33E00435AE7 /* ShoppingTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoppingTableViewCell.swift; sourceTree = "<group>"; };
 		57C97FE22AFAA9E000435AE7 /* ShoppingViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoppingViewModel.swift; sourceTree = "<group>"; };
 		57C97FF22AFBDF8100435AE7 /* ShoppingTodo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoppingTodo.swift; sourceTree = "<group>"; };
-		57C980012AFCE7D900435AE7 /* Test.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Test.swift; sourceTree = "<group>"; };
 		57C980042AFCE8F200435AE7 /* DetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -52,7 +49,6 @@
 				57C97FD52AFA893500435AE7 /* RxSwift in Frameworks */,
 				57C97FD82AFA95CF00435AE7 /* SnapKit in Frameworks */,
 				57C97FD32AFA893500435AE7 /* RxRelay in Frameworks */,
-				57C980002AFCE79B00435AE7 /* RxDataSources in Frameworks */,
 				57C97FD12AFA893500435AE7 /* RxCocoa in Frameworks */,
 				57C97FEF2AFBDD2400435AE7 /* Realm in Frameworks */,
 			);
@@ -139,7 +135,6 @@
 			isa = PBXGroup;
 			children = (
 				57C97FF22AFBDF8100435AE7 /* ShoppingTodo.swift */,
-				57C980012AFCE7D900435AE7 /* Test.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -175,7 +170,6 @@
 				57C97FD72AFA95CF00435AE7 /* SnapKit */,
 				57C97FEE2AFBDD2400435AE7 /* Realm */,
 				57C97FF02AFBDD2400435AE7 /* RealmSwift */,
-				57C97FFF2AFCE79B00435AE7 /* RxDataSources */,
 			);
 			productName = ShoppingList;
 			productReference = 57C97FB82AFA88D300435AE7 /* ShoppingList.app */;
@@ -209,7 +203,6 @@
 				57C97FCF2AFA893500435AE7 /* XCRemoteSwiftPackageReference "RxSwift" */,
 				57C97FD62AFA95CF00435AE7 /* XCRemoteSwiftPackageReference "SnapKit" */,
 				57C97FED2AFBDD2400435AE7 /* XCRemoteSwiftPackageReference "realm-swift" */,
-				57C97FFE2AFCE79B00435AE7 /* XCRemoteSwiftPackageReference "RxDataSources" */,
 			);
 			productRefGroup = 57C97FB92AFA88D300435AE7 /* Products */;
 			projectDirPath = "";
@@ -243,7 +236,6 @@
 				57C97FC02AFA88D300435AE7 /* ShoppingViewController.swift in Sources */,
 				57C97FDD2AFAA2D900435AE7 /* ShoppingMainView.swift in Sources */,
 				57C97FBC2AFA88D300435AE7 /* AppDelegate.swift in Sources */,
-				57C980022AFCE7D900435AE7 /* Test.swift in Sources */,
 				57C97FE32AFAA9E000435AE7 /* ShoppingViewModel.swift in Sources */,
 				57C97FBE2AFA88D300435AE7 /* SceneDelegate.swift in Sources */,
 			);
@@ -479,14 +471,6 @@
 				minimumVersion = 10.43.0;
 			};
 		};
-		57C97FFE2AFCE79B00435AE7 /* XCRemoteSwiftPackageReference "RxDataSources" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/RxSwiftCommunity/RxDataSources.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 5.0.0;
-			};
-		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -519,11 +503,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 57C97FED2AFBDD2400435AE7 /* XCRemoteSwiftPackageReference "realm-swift" */;
 			productName = RealmSwift;
-		};
-		57C97FFF2AFCE79B00435AE7 /* RxDataSources */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 57C97FFE2AFCE79B00435AE7 /* XCRemoteSwiftPackageReference "RxDataSources" */;
-			productName = RxDataSources;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

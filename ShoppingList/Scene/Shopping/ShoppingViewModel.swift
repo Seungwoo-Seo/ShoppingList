@@ -24,6 +24,7 @@ final class ShoppingViewModel {
 
         let modelSelected: ControlEvent<ShoppingTodo>
         let itemSelected: ControlEvent<IndexPath>
+        let itemDeleted: ControlEvent<IndexPath>
 
         let itemIsCompleted: PublishRelay<(todo: ShoppingTodo, isSelected: Bool)>
         let itemIsLiked: PublishRelay<(todo: ShoppingTodo, isLiked: Bool)>
@@ -45,7 +46,7 @@ final class ShoppingViewModel {
                 owner.todoList = todoList
                 items.accept(owner.todoList)
             }
-            .disposed(by: disposeBag)
+            .dispose()
 
         // 추가하기
         input.addButtonTapped
@@ -82,6 +83,20 @@ final class ShoppingViewModel {
             )
             .map { "\($0), \($1)" }
             // TODO: 보여질 VC에 전달할 데이터 만들어서 Output으로 만들기
+
+
+        input.itemDeleted
+            .bind(with: self) { owner, indexPath in
+                owner.task.deleteShoppingTodo(owner.todoList[indexPath.row])
+                owner.todoList.remove(at: indexPath.row)
+
+                print(owner.todoList)
+
+                items.accept(owner.todoList)
+            }
+            .disposed(by: disposeBag)
+
+
 
         input.itemIsCompleted
             .bind(with: self) { owner, value in
