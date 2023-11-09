@@ -26,6 +26,7 @@ final class ShoppingViewModel {
         let itemSelected: ControlEvent<IndexPath>
 
         let itemIsCompleted: PublishRelay<(todo: ShoppingTodo, isSelected: Bool)>
+        let itemIsLiked: PublishRelay<(todo: ShoppingTodo, isLiked: Bool)>
     }
 
     struct Output {
@@ -86,7 +87,18 @@ final class ShoppingViewModel {
             .bind(with: self) { owner, value in
                 if let index = owner.todoList.firstIndex(where: {$0.ownerId == value.todo.ownerId}) {
                     owner.todoList[index].isCompleted = value.isSelected
-                    owner.task.updateShoppingTodoDTO(owner.todoList[index], isComplete: value.isSelected)
+                    owner.task.updateShoppingTodoDTO(owner.todoList[index], isCompleted: value.isSelected)
+                } else {
+                    print("❌ 발생할 일이 없음")
+                }
+            }
+            .disposed(by: disposeBag)
+
+        input.itemIsLiked
+            .bind(with: self) { owner, value in
+                if let index = owner.todoList.firstIndex(where: {$0.ownerId == value.todo.ownerId}) {
+                    owner.todoList[index].isLiked = value.isLiked
+                    owner.task.updateShoppingTodoDTO(owner.todoList[index], isLiked: value.isLiked)
                 } else {
                     print("❌ 발생할 일이 없음")
                 }

@@ -80,7 +80,7 @@ class Repository {
 
     func updateShoppingTodoDTO(
         _ todo: ShoppingTodo,
-        isComplete: Bool
+        isCompleted: Bool
     ) {
         guard let todoDTO = fetchShoppingTodoDTO(todo) else {
             print("ShoppingTodoDTO is nil")
@@ -89,10 +89,28 @@ class Repository {
 
         do {
             try realm.write {
-                todoDTO.isCompleted = isComplete
+                todoDTO.isCompleted = isCompleted
             }
         } catch {
             print("❌ updateShoppingTodoDTO, isComplete")
+        }
+    }
+
+    func updateShoppingTodoDTO(
+        _ todo: ShoppingTodo,
+        isLiked: Bool
+    ) {
+        guard let todoDTO = fetchShoppingTodoDTO(todo) else {
+            print("ShoppingTodoDTO is nil")
+            return
+        }
+
+        do {
+            try realm.write {
+                todoDTO.isLiked = isLiked
+            }
+        } catch {
+            print("❌ updateShoppingTodoDTO, isLiked")
         }
     }
 

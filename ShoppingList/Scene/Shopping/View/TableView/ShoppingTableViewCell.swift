@@ -63,8 +63,9 @@ final class ShoppingTableViewCell: UITableViewCell {
 
     var disposeBag = DisposeBag()
 
-    let completeButtonIsSelected = PublishRelay<Bool>()
     let item = PublishRelay<ShoppingTodo>()
+    let completeButtonIsSelected = PublishRelay<Bool>()
+    let likeButtonIsSelected = PublishRelay<Bool>()
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -112,6 +113,13 @@ final class ShoppingTableViewCell: UITableViewCell {
                 !lastState
             }
             .bind(to: likeButton.rx.isSelected)
+            .disposed(by: disposeBag)
+
+        likeButton.rx.tap
+            .bind(with: self) { owner, _ in
+                let isSelected = owner.likeButton.isSelected
+                owner.likeButtonIsSelected.accept(isSelected)
+            }
             .disposed(by: disposeBag)
     }
 

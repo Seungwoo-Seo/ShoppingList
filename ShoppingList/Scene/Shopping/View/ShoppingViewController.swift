@@ -47,8 +47,11 @@ class ShoppingViewController: UIViewController {
 
         let inputItem = PublishRelay<ShoppingTodo>()
         let completeButtonIsSelected = PublishRelay<Bool>()
+        let likeButtonIsSelected = PublishRelay<Bool>()
+
 
         let itemIsCompleted = PublishRelay<(todo: ShoppingTodo, isSelected: Bool)>()
+        let itemIsLiked = PublishRelay<(todo: ShoppingTodo, isLiked: Bool)>()
 
         // Input
         let input = ShoppingViewModel.Input(
@@ -57,7 +60,8 @@ class ShoppingViewController: UIViewController {
             searchBarText: searchBar.rx.text,
             modelSelected: tableView.rx.modelSelected(ShoppingTodo.self),
             itemSelected: tableView.rx.itemSelected,
-            itemIsCompleted: itemIsCompleted
+            itemIsCompleted: itemIsCompleted,
+            itemIsLiked: itemIsLiked
         )
 
         // Output
@@ -100,6 +104,21 @@ class ShoppingViewController: UIViewController {
                     }
                     .bind(with: self) { owner, value in
                         itemIsCompleted.accept(value)
+                    }
+                    .disposed(by: cell.disposeBag)
+
+                cell.likeButtonIsSelected
+                    .bind(with: self) { owner, bool in
+                        likeButtonIsSelected.accept(bool)
+                    }
+                    .disposed(by: cell.disposeBag)
+
+                cell.likeButtonIsSelected
+                    .withLatestFrom(cell.item) { bool, todo in
+                        return (todo, bool)
+                    }
+                    .bind(with: self) { owner, value in
+                        itemIsLiked.accept(value)
                     }
                     .disposed(by: cell.disposeBag)
 
