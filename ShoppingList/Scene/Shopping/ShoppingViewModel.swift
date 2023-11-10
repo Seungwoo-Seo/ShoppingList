@@ -19,8 +19,9 @@ final class ShoppingViewModel {
 
     struct Input {
         let searchButtonClicked: ControlEvent<Void>
-        let addButtonTapped: ControlEvent<Void>
         let searchBarText: ControlProperty<String?>
+
+        let addButtonTapped: ControlEvent<Void>
 
         let modelSelected: ControlEvent<ShoppingTodo>
         let itemSelected: ControlEvent<IndexPath>
@@ -31,7 +32,6 @@ final class ShoppingViewModel {
     }
 
     struct Output {
-        let query: Observable<String>
         let cellIdentifier: Observable<String>
         let items: BehaviorRelay<[ShoppingTodo]>
     }
@@ -67,13 +67,27 @@ final class ShoppingViewModel {
             }
             .disposed(by: disposeBag)
 
-
-        let query = input.searchButtonClicked
+        input.searchButtonClicked
             .throttle(.seconds(1), scheduler: MainScheduler.instance)
             .withLatestFrom(input.searchBarText.orEmpty) { _, text in
+                print(text)
                 return text
             }
-            // TODO: Realm 만들어서 검색 구현해야 함
+            .bind(with: self) { owner, text in
+                print(text)
+                owner.todoList = owner.task.fetchShoppingTodoList(text)
+                items.accept(owner.todoList)
+            }
+            .disposed(by: disposeBag)
+
+        input.searchBarText
+            .orEmpty
+            .map { $0.trimmingCharacters(in: .whitespaces) }
+            .bind(with: self) { owner, text in
+                owner.todoList = owner.task.fetchShoppingTodoList(text)
+                items.accept(owner.todoList)
+            }
+            .disposed(by: disposeBag)
 
 
         let cellIdentifier = Observable
@@ -82,8 +96,6 @@ final class ShoppingViewModel {
                 input.itemSelected
             )
             .map { "\($0.name), \($1)" }
-            // TODO: 보여질 VC에 전달할 데이터 만들어서 Output으로 만들기
-
 
         input.itemDeleted
             .bind(with: self) { owner, indexPath in
@@ -121,7 +133,6 @@ final class ShoppingViewModel {
             .disposed(by: disposeBag)
 
         return Output(
-            query: query,
             cellIdentifier: cellIdentifier,
             items: items
         )
