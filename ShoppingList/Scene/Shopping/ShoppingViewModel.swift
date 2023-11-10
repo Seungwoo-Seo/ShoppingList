@@ -81,7 +81,7 @@ final class ShoppingViewModel {
                 input.modelSelected,
                 input.itemSelected
             )
-            .map { "\($0), \($1)" }
+            .map { "\($0.name), \($1)" }
             // TODO: 보여질 VC에 전달할 데이터 만들어서 Output으로 만들기
 
 

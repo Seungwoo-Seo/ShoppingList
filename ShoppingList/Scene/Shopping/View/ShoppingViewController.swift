@@ -75,7 +75,9 @@ class ShoppingViewController: UIViewController {
 
         output.cellIdentifier
             .bind(with: self) { owner, value in
-                print(value)
+                let vc = DetailViewController()
+                vc.dataString = value
+                owner.navigationController?.pushViewController(vc, animated: true)
             }
             .disposed(by: disposeBag)
 
