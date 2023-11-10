@@ -83,6 +83,7 @@ final class ShoppingTableViewCell: UITableViewCell {
         super.prepareForReuse()
 
         disposeBag = DisposeBag()
+        bind()
     }
 
     func bind() {
